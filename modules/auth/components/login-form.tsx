@@ -44,7 +44,7 @@ export function LoginForm() {
   const loginMutation = useLoginMutation({
     onSuccess: (data) => {
       toast.success(`Welcome back, ${data.user.name || 'Member'}!`);
-      router.push(APP_CONFIG.routes.dashboard);
+      router.push(APP_CONFIG.routes.workspaces);
     },
     onError: (error) => {
       const msg = normalizeApiError(error);

@@ -30,7 +30,7 @@ export function HeroActions() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link href={APP_CONFIG.routes.dashboard}>
+          <Link href={APP_CONFIG.routes.workspaces}>
             <Button
               variant="glow"
               size="lg"
@@ -38,7 +38,7 @@ export function HeroActions() {
               rightIcon={<ArrowRight className="h-4 w-4" />}
               className="font-semibold px-8"
             >
-              Go to Dashboard
+              Select Workspace
             </Button>
           </Link>
         </div>

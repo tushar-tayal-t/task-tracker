@@ -80,15 +80,15 @@ export function Navbar() {
                 </div>
               </div>
 
-              {/* Dashboard CTA */}
-              <Link href={APP_CONFIG.routes.dashboard}>
+              {/* Workspaces CTA */}
+              <Link href={APP_CONFIG.routes.workspaces}>
                 <Button
                   variant="primary"
                   size="sm"
                   leftIcon={<LayoutDashboard className="h-3.5 w-3.5" />}
                   rightIcon={<ArrowRight className="h-3.5 w-3.5" />}
                 >
-                  Dashboard
+                  Workspaces
                 </Button>
               </Link>
 
@@ -172,9 +172,9 @@ export function Navbar() {
                     </div>
                   </div>
 
-                  <Link href={APP_CONFIG.routes.dashboard} onClick={() => setMobileMenuOpen(false)}>
+                  <Link href={APP_CONFIG.routes.workspaces} onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="primary" className="w-full">
-                      Go to Dashboard
+                      Select Workspace
                     </Button>
                   </Link>
 

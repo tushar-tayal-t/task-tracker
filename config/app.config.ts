@@ -14,6 +14,7 @@ export const APP_CONFIG = {
     login: '/login',
     register: '/register',
     forgotPassword: '/forgot-password',
+    workspaces: '/workspaces',
     dashboard: '/dashboard',
     tasks: '/tasks',
     projects: '/projects',
