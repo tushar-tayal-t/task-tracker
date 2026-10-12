@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+task-tracker/
+│
+├── app/                                # Next.js App Router
+│   │
+│   ├── (auth)/                         # Public authentication pages
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   ├── register/
+│   │   │   └── page.tsx
+│   │   ├── forgot-password/
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   │
+│   ├── (dashboard)/                    # Authenticated application
+│   │   ├── layout.tsx
+│   │   ├── dashboard/
+│   │   │   └── page.tsx
+│   │   ├── tasks/
+│   │   │   └── page.tsx
+│   │   ├── projects/
+│   │   │   └── page.tsx
+│   │   ├── users/
+│   │   │   └── page.tsx
+│   │   └── settings/
+│   │       └── page.tsx
+│   │
+│   ├── api/                            # Optional Next.js API routes
+│   │   └── health/
+│   │       └── route.ts
+│   │
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── error.tsx
+│   ├── loading.tsx
+│   └── not-found.tsx
+│
+├── modules/                            # Feature-based business modules
+│   │
+│   ├── auth/
+│   │   ├── api/
+│   │   │   ├── auth.api.ts
+│   │   │   ├── auth.keys.ts
+│   │   │   └── auth.mutations.ts
+│   │   ├── components/
+│   │   │   ├── login-form.tsx
+│   │   │   └── register-form.tsx
+│   │   ├── hooks/
+│   │   ├── schemas/
+│   │   │   └── auth.schema.ts
+│   │   ├── stores/
+│   │   ├── types/
+│   │   │   └── auth.types.ts
+│   │   └── index.ts
+│   │
+│   ├── users/
+│   │   ├── api/
+│   │   │   ├── user.api.ts
+│   │   │   ├── user.keys.ts
+│   │   │   ├── user.queries.ts
+│   │   │   └── user.mutations.ts
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── schemas/
+│   │   ├── stores/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   └── index.ts
+│   │
+│   ├── tasks/
+│   │   ├── api/
+│   │   │   ├── task.api.ts
+│   │   │   ├── task.keys.ts
+│   │   │   ├── task.queries.ts
+│   │   │   └── task.mutations.ts
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── schemas/
+│   │   ├── stores/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   └── index.ts
+│   │
+│   ├── projects/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── schemas/
+│   │   ├── stores/
+│   │   ├── types/
+│   │   └── index.ts
+│   │
+│   ├── employees/
+│   ├── roles/
+│   ├── permissions/
+│   ├── notifications/
+│   └── reports/
+│
+├── components/                         # Shared reusable UI
+│   ├── ui/
+│   │   ├── button.tsx
+│   │   ├── input.tsx
+│   │   ├── select.tsx
+│   │   ├── modal.tsx
+│   │   └── dropdown.tsx
+│   ├── forms/
+│   ├── tables/
+│   ├── dialogs/
+│   ├── layouts/
+│   └── feedback/
+│
+├── lib/                                # Shared technical infrastructure
+│   │
+│   ├── api/
+│   │   ├── client.ts                  # Browser HTTP client
+│   │   ├── server-client.ts           # Server-side HTTP client
+│   │   ├── errors.ts                  # API error normalization
+│   │   └── types.ts                   # Shared API types
+│   │
+│   ├── query/
+│   │   ├── query-client.ts
+│   │   └── query-provider.tsx
+│   │
+│   ├── validation/
+│   ├── auth/
+│   ├── logger/
+│   └── utils/
+│
+├── stores/                             # Global Zustand stores
+│   ├── ui.store.ts
+│   └── preferences.store.ts
+│
+├── hooks/                              # Shared React hooks
+│
+├── providers/
+│   └── app-providers.tsx
+│
+├── config/
+│   └── app.config.ts
+│
+├── constants/
+│   └── app.constants.ts
+│
+├── types/                              # Cross-module types only
+│   └── common.types.ts
+│
+├── public/
+│   ├── images/
+│   └── icons/
+│
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+│
+├── .env.example
+├── .env.local
+├── .gitignore
+├── eslint.config.mjs
+├── next.config.ts
+├── package.json
+├── postcss.config.mjs
+├── tsconfig.json
+└── README.md
