@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 import { loginSchema, LoginFormData } from '../schemas/auth.schema';
 import { useLoginMutation } from '../api/auth.mutations';
 import { normalizeApiError } from '@/lib/api/errors';
@@ -41,13 +42,18 @@ export function LoginForm() {
     },
   });
 
-  // Production-grade TanStack Query Mutation
+  // Production-grade TanStack Query Mutation with Sonner Toasts
   const loginMutation = useLoginMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       setAuthSuccess(true);
+      toast.success(`Welcome back, ${data.user.name || 'Member'}!`);
       setTimeout(() => {
         router.push(APP_CONFIG.routes.dashboard);
       }, 500);
+    },
+    onError: (error) => {
+      const msg = normalizeApiError(error);
+      toast.error(msg);
     },
   });
 
@@ -59,6 +65,7 @@ export function LoginForm() {
     setValue('email', 'alex.rivera@tasktracker.io', { shouldValidate: true });
     setValue('password', 'Password123!', { shouldValidate: true });
     setValue('rememberMe', true, { shouldValidate: true });
+    toast.info('Demo credentials populated');
   };
 
   const errorMessage = loginMutation.error
