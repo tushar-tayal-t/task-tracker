@@ -3,12 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/modules/auth';
+import { useWorkspacesQuery } from '@/modules/workspaces';
 import { Button } from '@/components/ui/button';
 import { APP_CONFIG } from '@/config/app.config';
 import { ArrowRight, LayoutDashboard, UserCheck } from 'lucide-react';
 
 export function HeroActions() {
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { data: workspaces = [] } = useWorkspacesQuery({
+    enabled: isAuthenticated,
+  });
 
   if (isLoading) {
     return (
@@ -38,7 +42,7 @@ export function HeroActions() {
               rightIcon={<ArrowRight className="h-4 w-4" />}
               className="font-semibold px-8"
             >
-              Select Workspace
+              {workspaces.length > 0 ? `Go to Workspaces (${workspaces.length})` : 'Select Workspace'}
             </Button>
           </Link>
         </div>

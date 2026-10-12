@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { useCurrentUserQuery } from '../api/auth.queries';
 import { authApi } from '../api/auth.api';
 import { authKeys } from '../api/auth.keys';
+import { workspaceKeys } from '@/modules/workspaces/api/workspace.keys';
+import { useWorkspaceStore } from '@/modules/workspaces/stores/workspace.store';
 import { APP_CONFIG } from '@/config/app.config';
 
 /**
@@ -14,7 +16,7 @@ import { APP_CONFIG } from '@/config/app.config';
 export function useAuth() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: session, isLoading, isFetching } = useCurrentUserQuery();
+  const { data: session, isLoading, isFetching, isInitializing } = useCurrentUserQuery();
 
   const logout = async () => {
     try {
@@ -27,19 +29,25 @@ export function useAuth() {
       localStorage.removeItem('auth_token');
     }
 
-    // Reset session cache
+    // Clear active workspace
+    useWorkspaceStore.getState().clearActiveWorkspace();
+
+    // Reset session cache to null immediately across all mounted observers
     queryClient.setQueryData(authKeys.session(), null);
-    queryClient.removeQueries({ queryKey: authKeys.all });
+
+    // Evict cached workspaces so old data does not linger
+    queryClient.removeQueries({ queryKey: workspaceKeys.all });
 
     toast.info('Signed out successfully');
     router.push(APP_CONFIG.routes.login);
+    router.refresh();
   };
 
   return {
     session: session ?? null,
     user: session?.user ?? null,
     isAuthenticated: Boolean(session?.user),
-    isLoading: isLoading || isFetching,
+    isLoading: isInitializing || isLoading || isFetching,
     logout,
   };
 }

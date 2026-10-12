@@ -46,9 +46,34 @@ export const authApi = {
   /**
    * Fetch current authenticated user session
    */
-  getCurrentUser: async (): Promise<AuthSession> => {
+  getCurrentUser: async (): Promise<AuthSession | null> => {
+    if (typeof window !== 'undefined' && !localStorage.getItem('auth_token')) {
+      return null;
+    }
+
     try {
-      return await apiClient.get<AuthSession>('/auth/me');
+      const response = await apiClient.get<any>('/auth/me');
+      if (response && response.data) {
+        if (response.data.user) {
+          return response.data;
+        }
+        return {
+          user: response.data,
+          token: typeof window !== 'undefined' ? localStorage.getItem('auth_token') || '' : '',
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+        };
+      }
+      if (response && response.user) {
+        return response as AuthSession;
+      }
+      if (response && response.id && response.email) {
+        return {
+          user: response,
+          token: typeof window !== 'undefined' ? localStorage.getItem('auth_token') || '' : '',
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+        };
+      }
+      return response as AuthSession;
     } catch {
       // eslint-disable-next-line no-console
       console.warn('[authApi.getCurrentUser] External backend offline -> using mock fallback');

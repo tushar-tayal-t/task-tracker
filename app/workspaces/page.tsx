@@ -20,7 +20,13 @@ import {
 export default function WorkspacesPage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
-  const { data: workspaces = [], isLoading: workspacesLoading } = useWorkspacesQuery();
+  const {
+    data: workspaces = [],
+    isLoading: workspacesLoading,
+    isFetching: workspacesFetching,
+  } = useWorkspacesQuery({
+    enabled: !authLoading && isAuthenticated,
+  });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -128,8 +134,16 @@ export default function WorkspacesPage() {
             />
           </div>
 
-          <div className="text-xs text-zinc-500 font-mono">
-            {filteredWorkspaces.length} workspace{filteredWorkspaces.length === 1 ? '' : 's'} available
+          <div className="flex items-center gap-3">
+            {workspacesFetching && !workspacesLoading && (
+              <span className="flex items-center gap-1.5 text-[11px] text-indigo-400 font-medium">
+                <span className="h-1.5 w-1.5 animate-ping rounded-full bg-indigo-400" />
+                Syncing...
+              </span>
+            )}
+            <span className="text-xs text-zinc-500 font-mono">
+              {filteredWorkspaces.length} workspace{filteredWorkspaces.length === 1 ? '' : 's'} available
+            </span>
           </div>
         </div>
 

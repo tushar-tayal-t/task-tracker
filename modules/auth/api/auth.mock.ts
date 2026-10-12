@@ -51,7 +51,11 @@ export const mockAuthApi = {
   /**
    * Mock current user endpoint
    */
-  getCurrentUser: async (): Promise<AuthSession> => {
+  getCurrentUser: async (): Promise<AuthSession | null> => {
+    if (typeof window !== 'undefined' && !localStorage.getItem('auth_token')) {
+      return null;
+    }
+
     return {
       token: 'mock_jwt_token_development_mode',
       expiresAt: new Date(Date.now() + 86400000 * 7).toISOString(),

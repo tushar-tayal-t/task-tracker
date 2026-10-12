@@ -8,7 +8,17 @@ export const workspaceApi = {
    */
   getWorkspaces: async (): Promise<Workspace[]> => {
     try {
-      return await apiClient.get<Workspace[]>('/workspaces');
+      const response = await apiClient.get<any>('/workspaces');
+      if (Array.isArray(response)) {
+        return response;
+      }
+      if (response && Array.isArray(response.data)) {
+        return response.data;
+      }
+      if (response && Array.isArray(response.workspaces)) {
+        return response.workspaces;
+      }
+      return (response as Workspace[]) || [];
     } catch {
       // eslint-disable-next-line no-console
       console.warn('[workspaceApi.getWorkspaces] External backend offline -> using mock fallback');
@@ -21,7 +31,14 @@ export const workspaceApi = {
    */
   getWorkspaceById: async (id: string): Promise<Workspace> => {
     try {
-      return await apiClient.get<Workspace>(`/workspaces/${id}`);
+      const response = await apiClient.get<any>(`/workspaces/${id}`);
+      if (response && response.data) {
+        return response.data;
+      }
+      if (response && response.workspace) {
+        return response.workspace;
+      }
+      return response as Workspace;
     } catch {
       // eslint-disable-next-line no-console
       console.warn(`[workspaceApi.getWorkspaceById] External backend offline -> using mock fallback for id: ${id}`);
@@ -34,7 +51,14 @@ export const workspaceApi = {
    */
   createWorkspace: async (payload: CreateWorkspacePayload): Promise<Workspace> => {
     try {
-      return await apiClient.post<Workspace>('/workspaces', payload);
+      const response = await apiClient.post<any>('/workspaces', payload);
+      if (response && response.data) {
+        return response.data;
+      }
+      if (response && response.workspace) {
+        return response.workspace;
+      }
+      return response as Workspace;
     } catch {
       // eslint-disable-next-line no-console
       console.warn('[workspaceApi.createWorkspace] External backend offline -> using mock fallback');

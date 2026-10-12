@@ -11,7 +11,9 @@ export function useWorkspacesQuery(
   return useQuery<Workspace[], Error>({
     queryKey: workspaceKeys.lists(),
     queryFn: () => workspaceApi.getWorkspaces(),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0, // Mark stale immediately so navigating back triggers background refetch
+    gcTime: 10 * 60 * 1000, // Retain cached data in memory for 10 minutes across page navigations
+    refetchOnMount: true, // Serve cached data instantly, then revalidate in background
     ...options,
   });
 }

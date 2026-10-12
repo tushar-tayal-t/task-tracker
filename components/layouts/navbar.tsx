@@ -6,6 +6,7 @@ import { APP_CONFIG } from '@/config/app.config';
 import { NAVIGATION_LINKS } from '@/constants/app.constants';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/modules/auth';
+import { useWorkspacesQuery } from '@/modules/workspaces';
 import { getInitials } from '@/lib/utils';
 import {
   CheckSquare2,
@@ -19,6 +20,9 @@ import {
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { data: workspaces = [] } = useWorkspacesQuery({
+    enabled: isAuthenticated,
+  });
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-800/80 bg-zinc-950/75 backdrop-blur-xl transition-all">
@@ -110,7 +114,7 @@ export function Navbar() {
                   Sign In
                 </Button>
               </Link>
-              <Link href={APP_CONFIG.routes.dashboard}>
+              <Link href={APP_CONFIG.routes.login}>
                 <Button
                   variant="primary"
                   size="sm"
@@ -196,7 +200,7 @@ export function Navbar() {
                       Sign In
                     </Button>
                   </Link>
-                  <Link href={APP_CONFIG.routes.dashboard} onClick={() => setMobileMenuOpen(false)}>
+                  <Link href={APP_CONFIG.routes.login} onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="primary" className="w-full">
                       Open Workspace
                     </Button>
