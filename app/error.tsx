@@ -26,7 +26,7 @@ export default function ErrorBoundary({
         Something unexpected occurred
       </h2>
       <p className="mt-2 max-w-md text-sm text-zinc-400">
-        {error.message || 'An error occurred while loading this view. You can retry or head back home.'}
+        {'An error occurred while loading this view. You can retry or head back home.'}
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button
