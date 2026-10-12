@@ -1,11 +1,8 @@
 import React from 'react';
-import Link from 'next/link';
 import { Navbar } from '@/components/layouts/navbar';
 import { Footer } from '@/components/layouts/footer';
-import { Button } from '@/components/ui/button';
-import { APP_CONFIG } from '@/config/app.config';
+import { HeroActions } from '@/components/layouts/hero-actions';
 import {
-  ArrowRight,
   CheckCircle2,
   Zap,
   ShieldCheck,
@@ -44,29 +41,8 @@ export default function HomePage() {
               A high-performance task tracking platform built for teams to manage sprint backlogs, assign responsibilities, and hit deadlines without friction.
             </p>
 
-            {/* Call to Actions */}
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <Link href={APP_CONFIG.routes.login}>
-                <Button
-                  variant="glow"
-                  size="lg"
-                  rightIcon={<ArrowRight className="h-4 w-4" />}
-                  className="font-semibold px-8"
-                >
-                  Sign In to Workspace
-                </Button>
-              </Link>
-
-              <Link href={APP_CONFIG.routes.register}>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-zinc-800 hover:border-zinc-700 text-zinc-300"
-                >
-                  Create Account
-                </Button>
-              </Link>
-            </div>
+            {/* Dynamic Call to Actions based on Auth state */}
+            <HeroActions />
 
             {/* 3 Core Highlight Cards */}
             <div className="mt-20 grid grid-cols-1 gap-6 sm:grid-cols-3 text-left">

@@ -1,3 +1,5 @@
+'use client';
+
 import { useMutation, useQueryClient, UseMutationOptions } from '@tanstack/react-query';
 import { authApi } from './auth.api';
 import { authKeys } from './auth.keys';

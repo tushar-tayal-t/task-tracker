@@ -17,14 +17,14 @@ export default function AuthLayout({
       {/* Header bar */}
       <header className="relative z-10 flex h-16 w-full items-center justify-between px-6 sm:px-10">
         <Link
-          href="/"
+          href={APP_CONFIG.routes.home}
           className="flex items-center gap-2.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Home</span>
         </Link>
 
-        <Link href="/" className="flex items-center gap-2">
+        <Link href={APP_CONFIG.routes.home} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-0.5">
             <div className="flex h-full w-full items-center justify-center rounded-[6px] bg-zinc-950">
               <CheckSquare2 className="h-4 w-4 text-indigo-400" />

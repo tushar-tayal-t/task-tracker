@@ -20,13 +20,11 @@ import {
   ArrowRight,
   Sparkles,
   AlertCircle,
-  CheckCircle2,
 } from 'lucide-react';
 
 export function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [authSuccess, setAuthSuccess] = useState(false);
 
   const {
     register,
@@ -45,11 +43,8 @@ export function LoginForm() {
   // Production-grade TanStack Query Mutation with Sonner Toasts
   const loginMutation = useLoginMutation({
     onSuccess: (data) => {
-      setAuthSuccess(true);
       toast.success(`Welcome back, ${data.user.name || 'Member'}!`);
-      setTimeout(() => {
-        router.push(APP_CONFIG.routes.dashboard);
-      }, 500);
+      router.push(APP_CONFIG.routes.dashboard);
     },
     onError: (error) => {
       const msg = normalizeApiError(error);
@@ -94,14 +89,6 @@ export function LoginForm() {
         <div className="flex items-center gap-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-300">
           <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
           <span>{errorMessage}</span>
-        </div>
-      )}
-
-      {/* Success Notification */}
-      {authSuccess && (
-        <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-300">
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
-          <span>Authentication successful. Redirecting to your dashboard...</span>
         </div>
       )}
 
