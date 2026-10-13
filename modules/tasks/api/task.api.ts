@@ -8,9 +8,13 @@ export const taskApi = {
    */
   getTasks: async (filters?: TaskFilterOptions): Promise<Task[]> => {
     try {
-      return await apiClient.get<Task[]>('/tasks', {
+      const response = await apiClient.get<any>('/tasks', {
         params: filters,
       });
+      if (Array.isArray(response)) return response;
+      if (response && Array.isArray(response.data)) return response.data;
+      if (response && Array.isArray(response.tasks)) return response.tasks;
+      return (response as Task[]) || [];
     } catch {
       // eslint-disable-next-line no-console
       console.warn('[taskApi.getTasks] External backend offline -> using mock fallback');

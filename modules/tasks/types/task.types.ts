@@ -19,6 +19,7 @@ export interface TaskFilterOptions {
   status?: TaskStatus | 'ALL';
   priority?: TaskPriority | 'ALL';
   projectId?: string;
+  workspaceId?: string;
   searchQuery?: string;
 }
 

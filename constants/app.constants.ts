@@ -67,8 +67,9 @@ export const TASK_PRIORITY_CONFIG: Record<
 };
 
 export const NAVIGATION_LINKS = [
-  { label: 'Features', href: '#features' },
-  { label: 'Live Demo', href: '#live-demo' },
-  { label: 'Workflow', href: '#workflow' },
-  { label: 'Architecture', href: '#architecture' },
+  { label: 'Features', href: '/features' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Changelog', href: '/changelog' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
 ] as const;

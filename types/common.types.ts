@@ -19,7 +19,7 @@ export interface UserSummary {
   name: string;
   email: string;
   avatarUrl?: string;
-  role: 'ADMIN' | 'MANAGER' | 'MEMBER' | 'GUEST';
+  role: 'OWNER' | 'ADMIN' | 'MANAGER' | 'MEMBER' | 'VIEWER' | 'GUEST';
 }
 
 export interface TaskSummary {

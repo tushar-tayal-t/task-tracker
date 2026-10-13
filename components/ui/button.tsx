@@ -30,17 +30,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        'bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white shadow-lg shadow-indigo-600/25 border border-indigo-500/30 rounded-xl',
+        'bg-zinc-900 hover:bg-zinc-800 active:bg-black text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 shadow-sm border border-zinc-900/10 dark:border-white/10 rounded-xl',
       secondary:
-        'bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-zinc-100 border border-zinc-700/60 rounded-xl',
+        'bg-zinc-100 hover:bg-zinc-200 active:bg-zinc-300 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700/60 rounded-xl',
       outline:
-        'bg-transparent hover:bg-zinc-800/60 text-zinc-200 border border-zinc-700 hover:border-zinc-500 rounded-xl',
+        'bg-transparent hover:bg-zinc-100 text-zinc-800 border border-zinc-200 dark:text-zinc-200 dark:border-zinc-800 dark:hover:bg-zinc-800/60 rounded-xl',
       ghost:
-        'bg-transparent hover:bg-zinc-800/50 text-zinc-300 hover:text-white rounded-xl',
+        'bg-transparent hover:bg-zinc-100 text-zinc-600 hover:text-zinc-950 dark:hover:bg-zinc-800/60 dark:text-zinc-400 dark:hover:text-white rounded-xl',
       danger:
-        'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border border-rose-500/30 rounded-xl',
+        'bg-rose-600 hover:bg-rose-500 text-white shadow-sm border border-rose-500/20 rounded-xl',
       glow:
-        'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-95 text-white shadow-lg shadow-purple-500/30 rounded-xl border border-white/20',
+        'bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white shadow-sm border border-indigo-500/30 rounded-xl',
     };
 
     const sizes = {

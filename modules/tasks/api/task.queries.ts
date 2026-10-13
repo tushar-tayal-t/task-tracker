@@ -13,6 +13,9 @@ export function useTasksQuery(
   return useQuery<Task[], Error>({
     queryKey: taskKeys.list(filters),
     queryFn: () => taskApi.getTasks(filters),
+    staleTime: 0,
+    gcTime: 10 * 60 * 1000,
+    refetchOnMount: true,
     ...options,
   });
 }

@@ -1,22 +1,14 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { Workspace } from '../types/workspace.types';
 
 interface WorkspaceState {
   activeWorkspace: Workspace | null;
-  setActiveWorkspace: (workspace: Workspace) => void;
+  setActiveWorkspace: (workspace: Workspace | null) => void;
   clearActiveWorkspace: () => void;
 }
 
-export const useWorkspaceStore = create<WorkspaceState>()(
-  persist(
-    (set) => ({
-      activeWorkspace: null,
-      setActiveWorkspace: (workspace) => set({ activeWorkspace: workspace }),
-      clearActiveWorkspace: () => set({ activeWorkspace: null }),
-    }),
-    {
-      name: 'active-workspace-storage',
-    }
-  )
-);
+export const useWorkspaceStore = create<WorkspaceState>((set) => ({
+  activeWorkspace: null,
+  setActiveWorkspace: (workspace) => set({ activeWorkspace: workspace }),
+  clearActiveWorkspace: () => set({ activeWorkspace: null }),
+}));

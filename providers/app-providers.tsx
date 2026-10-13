@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { QueryProvider } from '@/lib/query/query-provider';
+import { ThemeProvider } from './theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
 interface AppProvidersProps {
@@ -11,8 +12,10 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <QueryProvider>
-      {children}
-      <Toaster />
+      <ThemeProvider>
+        {children}
+        <Toaster />
+      </ThemeProvider>
     </QueryProvider>
   );
 }

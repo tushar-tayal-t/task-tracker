@@ -9,28 +9,22 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-screen flex-col bg-zinc-950 text-zinc-100 overflow-hidden">
-      {/* Background Ambient Glows */}
-      <div className="ambient-glow -top-40 left-1/2 -translate-x-1/2 h-[450px] w-[600px] bg-indigo-600/15" />
-      <div className="ambient-glow bottom-0 right-0 h-[300px] w-[300px] bg-purple-600/10" />
-
+    <div className="relative flex min-h-screen flex-col bg-zinc-50 text-zinc-900 transition-colors dark:bg-zinc-950 dark:text-zinc-100">
       {/* Header bar */}
-      <header className="relative z-10 flex h-16 w-full items-center justify-between px-6 sm:px-10">
+      <header className="relative z-10 flex h-16 w-full items-center justify-between border-b border-zinc-200/80 bg-white/80 px-6 backdrop-blur-md sm:px-10 dark:border-zinc-800/80 dark:bg-zinc-950/80">
         <Link
           href={APP_CONFIG.routes.home}
-          className="flex items-center gap-2.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
+          className="flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-zinc-900 transition-colors dark:text-zinc-400 dark:hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Home</span>
         </Link>
 
         <Link href={APP_CONFIG.routes.home} className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-0.5">
-            <div className="flex h-full w-full items-center justify-center rounded-[6px] bg-zinc-950">
-              <CheckSquare2 className="h-4 w-4 text-indigo-400" />
-            </div>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs">
+            <CheckSquare2 className="h-4 w-4" />
           </div>
-          <span className="text-sm font-bold tracking-tight text-white">
+          <span className="text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
             {APP_CONFIG.name}
           </span>
         </Link>
@@ -44,7 +38,7 @@ export default function AuthLayout({
       </main>
 
       {/* Bottom Footer */}
-      <footer className="relative z-10 py-4 text-center text-xs text-zinc-500">
+      <footer className="relative z-10 py-6 text-center text-xs text-zinc-500 dark:text-zinc-500 border-t border-zinc-200/60 dark:border-zinc-800/60">
         &copy; {new Date().getFullYear()} {APP_CONFIG.name}. All rights reserved.
       </footer>
     </div>

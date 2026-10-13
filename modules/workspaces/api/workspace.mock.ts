@@ -51,7 +51,10 @@ export const mockWorkspaceApi = {
   getWorkspaceById: async (id: string): Promise<Workspace> => {
     await new Promise((resolve) => setTimeout(resolve, 200));
     const found = MOCK_WORKSPACES.find((w) => w.id === id || w.slug === id);
-    return found || MOCK_WORKSPACES[0];
+    if (!found) {
+      throw new Error(`Workspace with identifier "${id}" not found.`);
+    }
+    return found;
   },
 
   createWorkspace: async (payload: CreateWorkspacePayload): Promise<Workspace> => {

@@ -26,7 +26,7 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
 
   const handleSelect = () => {
     setActiveWorkspace(workspace);
-    router.push(APP_CONFIG.routes.dashboard);
+    router.push(APP_CONFIG.routes.workspaceDetail(workspace.id));
   };
 
   const roleBadgeStyles = {

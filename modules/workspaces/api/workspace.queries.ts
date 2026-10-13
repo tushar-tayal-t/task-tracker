@@ -26,6 +26,9 @@ export function useWorkspaceDetailQuery(
     queryKey: workspaceKeys.detail(id),
     queryFn: () => workspaceApi.getWorkspaceById(id),
     enabled: Boolean(id),
+    staleTime: 0, // Mark stale immediately so navigating/refreshing revalidates with backend
+    gcTime: 10 * 60 * 1000, // Retain in memory across transitions
+    refetchOnMount: true, // Serve cached workspace instantly, revalidate in background
     ...options,
   });
 }
