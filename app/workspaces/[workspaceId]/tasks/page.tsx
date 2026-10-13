@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useTasksQuery, Task, CreateTaskModal } from '@/modules/tasks';
+import { useTasksQuery, Task, CreateTaskModal, TaskSummaryModal } from '@/modules/tasks';
 import { useMembersQuery } from '@/modules/members';
 import { TaskPriority, TaskStatus } from '@/types/common.types';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,11 @@ import {
   Minus,
   ArrowDown,
   Calendar,
+  List as ListIcon,
+  LayoutGrid,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
 } from 'lucide-react';
 
 function TasksContent() {
@@ -29,7 +34,13 @@ function TasksContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedAssignee, setSelectedAssignee] = useState<string>('ALL');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedTaskForSummary, setSelectedTaskForSummary] = useState<Task | null>(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
 
   // Fetch workspace members for assignee filtering & assignment
   const { data: members = [] } = useMembersQuery(workspaceId);
@@ -49,12 +60,18 @@ function TasksContent() {
   ];
 
   const handleSelectPriority = (val: string) => {
+    setCurrentPage(1);
     if (val === 'ALL') {
       router.push(`/workspaces/${workspaceId}/tasks`);
     } else {
       router.push(`/workspaces/${workspaceId}/tasks?priority=${val.toLowerCase()}`);
     }
   };
+
+  // Reset to page 1 when any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedStatus, selectedAssignee, currentPriorityParam, pageSize]);
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
@@ -76,11 +93,35 @@ function TasksContent() {
     });
   }, [tasks, searchQuery, selectedStatus, currentPriorityParam, selectedAssignee]);
 
+  // Paginated slice
+  const totalPages = Math.max(1, Math.ceil(filteredTasks.length / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, filteredTasks.length);
+  const paginatedTasks = useMemo(() => {
+    return filteredTasks.slice(startIndex, endIndex);
+  }, [filteredTasks, startIndex, endIndex]);
+
   const priorityBadgeConfig = {
-    URGENT: { label: 'Urgent', color: 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/40 dark:bg-rose-950/40 dark:text-rose-400' },
-    HIGH: { label: 'High', color: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/40 dark:text-amber-400' },
-    MEDIUM: { label: 'Medium', color: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900/40 dark:bg-blue-950/40 dark:text-blue-400' },
-    LOW: { label: 'Low', color: 'border-zinc-200 bg-zinc-100 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-400' },
+    URGENT: {
+      label: 'Urgent',
+      icon: Flame,
+      color: 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/40 dark:bg-rose-950/40 dark:text-rose-400',
+    },
+    HIGH: {
+      label: 'High',
+      icon: ArrowUp,
+      color: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/40 dark:text-amber-400',
+    },
+    MEDIUM: {
+      label: 'Medium',
+      icon: Minus,
+      color: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900/40 dark:bg-blue-950/40 dark:text-blue-400',
+    },
+    LOW: {
+      label: 'Low',
+      icon: ArrowDown,
+      color: 'border-zinc-200 bg-zinc-100 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-400',
+    },
   };
 
   const statusBadgeConfig = {
@@ -112,18 +153,48 @@ function TasksContent() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* View Mode Toggle */}
+          <div className="inline-flex items-center rounded-lg border border-zinc-200 bg-zinc-100 p-0.5 dark:border-zinc-800 dark:bg-zinc-900">
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-white'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
+              }`}
+              title="List View"
+            >
+              <ListIcon className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">List</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-white'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
+              }`}
+              title="Grid View"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Grid</span>
+            </button>
+          </div>
+
           <Button
             variant="primary"
             size="sm"
             leftIcon={<Plus className="h-4 w-4" />}
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsCreateModalOpen(true)}
           >
             Assign New Task
           </Button>
         </div>
       </div>
 
-      {/* Priority Tabs Bar (Clean high-contrast) */}
+      {/* Priority Tabs Bar (Preserved Menus: All Tasks, Urgent, High, Medium, Low) */}
       <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-0.5">
         {priorityTabs.map((tab) => {
           const Icon = tab.icon;
@@ -189,22 +260,18 @@ function TasksContent() {
               {status === 'ALL' ? 'All' : status.replace('_', ' ')}
             </button>
           ))}
-
-          <span className="text-[11px] text-zinc-400 font-mono ml-1">
-            {filteredTasks.length} task{filteredTasks.length === 1 ? '' : 's'}
-          </span>
         </div>
       </div>
 
-      {/* Task Cards Grid */}
+      {/* Task Content: List View (Default) or Grid View */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div key={n} className="h-36 rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900/40 animate-pulse" />
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <div key={n} className="h-16 rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900/40 animate-pulse" />
           ))}
         </div>
       ) : filteredTasks.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-800 p-10 text-center">
+        <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-800 p-12 text-center">
           <CheckSquare2 className="mx-auto h-8 w-8 text-zinc-400" />
           <h3 className="mt-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">No tasks found</h3>
           <p className="mt-1 text-xs text-zinc-500">
@@ -213,33 +280,130 @@ function TasksContent() {
               : 'Create a task above to start tracking sprint deliverables.'}
           </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {filteredTasks.map((task) => {
-            const pBadge = priorityBadgeConfig[task.priority] || priorityBadgeConfig.MEDIUM;
-            const sBadge = statusBadgeConfig[task.status] || statusBadgeConfig.TODO;
+      ) : viewMode === 'list' ? (
+        /* High-Density Agile List View with Clickable Rows for Summary */
+        <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+          {/* Table Header */}
+          <div className="hidden sm:grid grid-cols-12 items-center border-b border-zinc-200 bg-zinc-50/70 px-4 py-2.5 text-[11px] font-semibold text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400">
+            <div className="col-span-2">Status</div>
+            <div className="col-span-5">Task & Backlog Details</div>
+            <div className="col-span-2">Priority</div>
+            <div className="col-span-2">Assignee</div>
+            <div className="col-span-1 text-right pr-2">Due Date</div>
+          </div>
 
-            return (
-              <div
-                key={task.id}
-                className="group flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-4.5 shadow-xs hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 transition"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span
-                      className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold ${pBadge.color}`}
-                    >
-                      {pBadge.label}
-                    </span>
+          {/* List Items */}
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
+            {paginatedTasks.map((task) => {
+              const pBadge = priorityBadgeConfig[task.priority] || priorityBadgeConfig.MEDIUM;
+              const sBadge = statusBadgeConfig[task.status] || statusBadgeConfig.TODO;
+              const PriorityIcon = pBadge.icon;
 
-                    <span
-                      className={`rounded-md border px-2 py-0.5 text-[10px] font-medium ${sBadge.color}`}
-                    >
+              return (
+                <div
+                  key={task.id}
+                  onClick={() => setSelectedTaskForSummary(task)}
+                  className="group flex flex-col sm:grid sm:grid-cols-12 sm:items-center px-4 py-3.5 hover:bg-zinc-50/90 dark:hover:bg-zinc-850/60 transition gap-2 sm:gap-0 cursor-pointer"
+                  title="Click to view task summary"
+                >
+                  {/* Status Column */}
+                  <div className="sm:col-span-2 flex items-center">
+                    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-medium ${sBadge.color}`}>
                       {sBadge.label}
                     </span>
                   </div>
 
-                  <h3 className="mt-2.5 text-sm font-semibold text-zinc-900 dark:text-white line-clamp-1">
+                  {/* Task Details Column */}
+                  <div className="sm:col-span-5 pr-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 shrink-0">
+                        #{task.id}
+                      </span>
+                      <h3 className="text-xs font-semibold text-zinc-900 dark:text-white line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        {task.title}
+                      </h3>
+                    </div>
+                    {task.description && (
+                      <p className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-1">
+                        {task.description}
+                      </p>
+                    )}
+                    {task.tags && task.tags.length > 0 && (
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        {task.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.2 text-[9px] font-mono text-zinc-600 dark:border-zinc-800 dark:bg-zinc-850 dark:text-zinc-400"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Priority Column */}
+                  <div className="sm:col-span-2 flex items-center">
+                    <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-semibold ${pBadge.color}`}>
+                      <PriorityIcon className="h-3 w-3" />
+                      <span>{pBadge.label}</span>
+                    </span>
+                  </div>
+
+                  {/* Assignee Column */}
+                  <div className="sm:col-span-2 flex items-center gap-2">
+                    {task.assignee ? (
+                      <>
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full border border-zinc-300 bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 text-[9px] font-bold text-zinc-800 dark:text-zinc-200 shrink-0">
+                          {task.assignee.name.charAt(0)}
+                        </div>
+                        <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium truncate">
+                          {task.assignee.name}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-xs text-zinc-400 italic">Unassigned</span>
+                    )}
+                  </div>
+
+                  {/* Due Date Column */}
+                  <div className="sm:col-span-1 flex sm:justify-end items-center gap-1.5 text-xs text-zinc-500 pr-2">
+                    <Calendar className="h-3 w-3 text-zinc-400" />
+                    <span>{task.dueDate}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        /* Grid / Cards View with Clickable Cards for Summary */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {paginatedTasks.map((task) => {
+            const pBadge = priorityBadgeConfig[task.priority] || priorityBadgeConfig.MEDIUM;
+            const sBadge = statusBadgeConfig[task.status] || statusBadgeConfig.TODO;
+            const PriorityIcon = pBadge.icon;
+
+            return (
+              <div
+                key={task.id}
+                onClick={() => setSelectedTaskForSummary(task)}
+                className="group flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-4.5 shadow-xs hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 transition cursor-pointer"
+                title="Click to view task summary"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-semibold ${pBadge.color}`}>
+                      <PriorityIcon className="h-3 w-3" />
+                      <span>{pBadge.label}</span>
+                    </span>
+
+                    <span className={`rounded-md border px-2 py-0.5 text-[10px] font-medium ${sBadge.color}`}>
+                      {sBadge.label}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-2.5 text-sm font-semibold text-zinc-900 dark:text-white line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                     {task.title}
                   </h3>
                   <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
@@ -283,11 +447,85 @@ function TasksContent() {
         </div>
       )}
 
+      {/* Pagination Bar */}
+      {filteredTasks.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500">
+          <div className="flex items-center gap-2">
+            <span>
+              Showing <strong className="text-zinc-900 dark:text-white">{startIndex + 1}</strong> to{' '}
+              <strong className="text-zinc-900 dark:text-white">{endIndex}</strong> of{' '}
+              <strong className="text-zinc-900 dark:text-white">{filteredTasks.length}</strong> tasks
+            </span>
+
+            <span className="text-zinc-300 dark:text-zinc-700">|</span>
+
+            <div className="flex items-center gap-1">
+              <span>Per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 cursor-pointer"
+              >
+                <option value={6}>6</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Page navigation controls */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+              className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 disabled:pointer-events-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-850 cursor-pointer"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+              <span>Prev</span>
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                type="button"
+                onClick={() => setCurrentPage(pageNum)}
+                className={`h-7 w-7 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                  currentPage === pageNum
+                    ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-xs'
+                    : 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-850'
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage >= totalPages}
+              className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 disabled:pointer-events-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-850 cursor-pointer"
+            >
+              <span>Next</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Task Summary Modal (Opens on row/card click) */}
+      <TaskSummaryModal
+        task={selectedTaskForSummary}
+        isOpen={!!selectedTaskForSummary}
+        onClose={() => setSelectedTaskForSummary(null)}
+        workspaceId={workspaceId}
+      />
+
       {/* Create & Assign Task Modal */}
       <CreateTaskModal
         workspaceId={workspaceId}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
         defaultPriority={currentPriorityParam !== 'ALL' ? (currentPriorityParam as TaskPriority) : 'MEDIUM'}
       />
     </div>

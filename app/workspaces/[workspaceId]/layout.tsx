@@ -20,8 +20,6 @@ import {
   Moon,
   Menu,
   X,
-  Flame,
-  ArrowUp,
   ChevronsUpDown,
 } from 'lucide-react';
 
@@ -81,20 +79,6 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
       icon: CheckSquare2,
       active: pathname.startsWith(`/workspaces/${workspaceId}/tasks`),
       badge: workspace?.taskCount ? String(workspace.taskCount) : undefined,
-      subItems: [
-        {
-          label: 'High Priority',
-          href: `/workspaces/${workspaceId}/tasks?priority=high`,
-          icon: ArrowUp,
-          active: pathname.includes('priority=high'),
-        },
-        {
-          label: 'Urgent',
-          href: `/workspaces/${workspaceId}/tasks?priority=urgent`,
-          icon: Flame,
-          active: pathname.includes('priority=urgent'),
-        },
-      ],
     },
     {
       label: 'Chats & Groups',
@@ -206,28 +190,6 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
                         </span>
                       )}
                     </Link>
-
-                    {/* Sub-items (e.g. Quick filters under tasks) */}
-                    {item.subItems && item.active && (
-                      <div className="ml-5 pl-2 border-l border-zinc-200 dark:border-zinc-800 space-y-0.5 py-1">
-                        {item.subItems.map((sub) => {
-                          const SubIcon = sub.icon;
-                          return (
-                            <Link
-                              key={sub.href}
-                              href={sub.href}
-                              className={`flex items-center gap-2 rounded-md px-2 py-1 text-[11px] transition ${sub.active
-                                  ? 'font-semibold text-zinc-900 dark:text-white bg-zinc-200/50 dark:bg-zinc-850'
-                                  : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
-                                }`}
-                            >
-                              <SubIcon className="h-3 w-3" />
-                              <span>{sub.label}</span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
                   </div>
                 );
               })}

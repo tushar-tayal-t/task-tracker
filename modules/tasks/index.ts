@@ -5,3 +5,4 @@ export * from './api/task.queries';
 export * from './api/task.mutations';
 export * from './components/task-preview-board';
 export * from './components/create-task-modal';
+export * from './components/task-summary-modal';
